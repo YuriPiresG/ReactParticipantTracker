@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Alert,
   FlatList,
@@ -11,22 +11,16 @@ import { Participant } from "../../components/Participant";
 import { styles } from "./styles";
 
 export function HomePage() {
-  const participants = [
-    "Yuri",
-    "Ana",
-    "Bruno",
-    "Oscar",
-    "Samurai",
-    "Seto",
-    "Leo",
-    "Raimundo",
-  ];
-  function handleNameAdd() {
-    if (participants.includes("Yuri")) {
+  const [participants, setParticipants] = useState<string[]>([]);
+  const [name, setName] = useState<string>("");
+  function handleNameAdd(name: string) {
+    if (participants.includes(name)) {
       Alert.alert("Erro", "Participante já cadastrado!");
       return;
     }
+    setParticipants([...participants, name]);
   }
+
   function handleParticipantRemove(name: string) {
     Alert.alert("Remover", `Remover o participante ${name}?`, [
       {
@@ -35,23 +29,32 @@ export function HomePage() {
       },
       {
         text: "Sim",
-        onPress: () => Alert.alert("Deletado!"),
+        onPress: () => {
+          setParticipants(
+            participants.filter((participant) => participant !== name)
+          );
+          Alert.alert("Sucesso", "Participante removido com sucesso!");
+        },
       },
     ]);
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.mainText}>This is our homepage!</Text>
-      <Text style={styles.subText}>This is our subtext!</Text>
+      <Text style={styles.mainText}>Tela de participantes</Text>
+      <Text style={styles.subText}>registro de participantes</Text>
       <View style={styles.form}>
         <TextInput
           style={styles.input}
           placeholder="Nome do evento"
           placeholderTextColor={"#6b6b6b"}
           keyboardType="default"
+          onChange={(e) => setName(e.nativeEvent.text)}
         />
-        <TouchableOpacity style={styles.btn} onPress={handleNameAdd}>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => handleNameAdd(name)}
+        >
           <Text style={styles.btnTxt}>+</Text>
         </TouchableOpacity>
       </View>
